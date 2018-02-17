@@ -1,0 +1,11 @@
+{
+    "version": "0.1.0",
+    "configurations": [                
+        {
+            "name": "Launch snake",
+            "type": "chrome",
+            "request": "launch",            
+            "file": "${workspaceFolder}/snake/snake.html"
+        },    
+    ]
+}
