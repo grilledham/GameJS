@@ -16,9 +16,12 @@ let canvas;
 let ctx;
 let blockWidth;
 let blockHeight;
+let score;
+let scoreText;
 let snake;
 let apple;
 let dir;
+let isRunning = false;
 
 let lastKey = "";
 
@@ -26,11 +29,11 @@ let lastKey = "";
 
 document.addEventListener("DOMContentLoaded", function (event) {
     canvas = document.getElementById("canvas");
+    scoreText = document.getElementById("score");
+
     blockWidth = canvas.width / xBlocks;
     blockHeight = canvas.height / yBlocks;
     ctx = canvas.getContext("2d");
-
-    startGame();
 
     document.addEventListener('keypress', (event) => {
         let keyName = event.key;
@@ -39,6 +42,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         //doInput(keyName);
     });
 
+    startGame();
     setInterval(update, 1000 / 10)
 });
 
@@ -53,18 +57,41 @@ function startGame() {
     dir = new Point(1, 0);
 
     spawnApple();
+
+    score = 0;
+    scoreText.innerHTML = "Score: " + score;
+
+    isRunning = true;
+}
+
+function isPointInSnake(x, y) {
+    for (let index = 0; index < snake.length; index++) {
+        const element = snake[index];
+        if (x == element.x && y == element.y)
+            return true;
+    }
+    return false;
+}
+
+function gameOver() {
+    isRunning = false;
+    scoreText.innerHTML = "Final Score: " + score;
 }
 
 
 function update() {
     doInput();
+
+    if (!isRunning)
+        return;
+
+
     doSnake();
 
     render();
 }
 
 function doInput() {
-    console.log(lastKey);
     if (lastKey == "")
         return;
 
@@ -102,7 +129,7 @@ function doInput() {
 
 function doSnake() {
     let head = snake[0];
-    let last = snake[snake.length - 1];
+    let last = snake.pop();
     let newHead = new Point(head.x, head.y);
 
     newHead.x += dir.x;
@@ -118,32 +145,29 @@ function doSnake() {
     else if (newHead.y < 0)
         newHead.y = yBlocks - 1;
 
+    if (isPointInSnake(newHead.x, newHead.y)) {
+        gameOver();
+        return;
+    }
+
     snake.splice(0, 0, newHead);
 
     if (apple.x == newHead.x && apple.y == newHead.y) {
         spawnApple();
-    } else if (snake.length > 0) {
-        snake.pop();
+        snake.push(last);
+        score++;
+        scoreText.innerHTML = "Score: " + score;
     }
 }
 
 function spawnApple() {
     let x;
     let y;
-    let doAgain = false;
-    
+
     do {
         x = randomInt(xBlocks);
         y = randomInt(yBlocks);
-        for (let index = 0; index < snake.length; index++) {
-            let point = snake[index];
-            if (x == point.x && y == point.y) {
-                doAgain = true;
-                break;
-            }
-        }
-
-    } while (doAgain);
+    } while (isPointInSnake(x, y));
 
     apple = new Point(x, y);
 }
@@ -157,17 +181,19 @@ function render() {
     for (let index = 0; index < snake.length; index++) {
         let point = snake[index];
         ctx.fillRect(point.x * blockWidth, point.y * blockWidth, blockWidth, blockHeight);
+
+        if (index == 0) {
+            ctx.fillStyle = "red";
+            let x = dir.x == 0 ? 0.25 : 0;
+            let y = dir.y == 0 ? 0.25 : 0;
+            ctx.fillRect(point.x * blockWidth + (0.5 - x / 2) * blockWidth + x * blockWidth, point.y * blockHeight + (0.5 - y / 2) * blockHeight + y * blockHeight, 0.25 * blockWidth, 0.25 * blockHeight);
+            ctx.fillRect(point.x * blockWidth + (0.5 - x / 2) * blockWidth - x * blockWidth, point.y * blockHeight + (0.5 - y / 2) * blockHeight - y * blockHeight, 0.25 * blockWidth, 0.25 * blockHeight);
+            ctx.fillStyle = "black";
+        }
     }
 
     ctx.beginPath();
-    ctx.arc(apple.x * blockWidth + blockWidth / 2, apple.y * blockHeight + blockHeight / 2, blockHeight / 2, 0, 2 * Math.PI, false);
+    ctx.ellipse(apple.x * blockWidth + blockWidth / 2, apple.y * blockHeight + blockHeight / 2, blockWidth / 2, blockHeight / 2, 0, 2 * Math.PI, false);
     ctx.fillStyle = 'green';
     ctx.fill();
-
-
-
-    /*  ctx.fillStyle = "green";
-     ctx.fillRect(apple.x * blockWidth, apple.y * blockHeight, blockWidth, blockHeight);   */
-
-
 }
