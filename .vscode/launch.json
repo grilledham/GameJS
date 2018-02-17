@@ -1,11 +1,12 @@
 {
     "version": "0.1.0",
-    "configurations": [                
+    "configurations": [
         {
-            "name": "Launch snake",
             "type": "chrome",
-            "request": "launch",            
-            "file": "${workspaceFolder}/snake/snake.html"
-        },    
+            "request": "launch",
+            "name": "Launch snake",
+            "url": "http://localhost:5500/snake/snake.html",
+            "webRoot": "${workspaceFolder}"
+        },       
     ]
 }
