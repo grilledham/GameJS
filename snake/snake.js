@@ -1,3 +1,5 @@
+/// <reference path="../typings/globals/jquery/index.d.ts" />
+
 let xBlocks = 10;
 let yBlocks = 10;
 
@@ -19,6 +21,8 @@ let canvasWidth;
 let canvasHeight;
 let columns;
 let rows;
+let resetButton;
+let toggleDebugButton;
 
 let ctx;
 let blockWidth;
@@ -44,19 +48,27 @@ document.addEventListener("DOMContentLoaded", function (event) {
     canvasHeight = document.getElementById("canvasHeight");
     columns = document.getElementById("columns");
     rows = document.getElementById("rows");
+    resetButton = document.getElementById("resetButton");
+    toggleDebugButton = $("#toggleDebugButton");
 
     canvasWidth.value = canvas.width;
     canvasHeight.value = canvas.height;
 
-    document.addEventListener('keypress', (event) => {
+    document.addEventListener("keypress", event => {
         let keyName = event.key;
         keyName = keyName.toLowerCase();
         lastKey = keyName;
         //doInput(keyName);
     });
 
+    resetButton.onclick = startGame;
+
+    toggleDebugButton.click(event => {
+        $("#speed").toggle();
+    });
+
     startGame();
-    setInterval(update, 1000 / 60)
+    setInterval(update, 1000 / 60);
 });
 
 function randomInt(max) {
@@ -64,10 +76,8 @@ function randomInt(max) {
 }
 
 function clamp(number, min, max) {
-    if (number < min)
-        return min;
-    if (number > max)
-        return max;
+    if (number < min) return min;
+    if (number > max) return max;
 
     return number;
 }
@@ -77,12 +87,25 @@ function doSpeed() {
     let s = 2 * Math.sqrt(speed);
     ticksNeededForMove = 60 / s;
     ticksNeededForMove = clamp(ticksNeededForMove, 2, 60);
-    speedText.innerHTML = "speed:" + speed + ", tiles per second: " + 60 / ticksNeededForMove;
+
+    speedText.innerHTML =
+        "speed: " +
+        speed +
+        ", tiles per second: " +
+        parseFloat(60 / ticksNeededForMove).toFixed(2);
 }
 
 function startGame() {
-    let cw = clamp(parseInt(canvasWidth.value) || canvasWidth, canvasWidth.min, canvasWidth.max);
-    let ch = clamp(parseInt(canvasHeight.value) || canvasHeight, canvasHeight.min, canvasHeight.max);
+    let cw = clamp(
+        parseInt(canvasWidth.value) || canvasWidth,
+        canvasWidth.min,
+        canvasWidth.max
+    );
+    let ch = clamp(
+        parseInt(canvasHeight.value) || canvasHeight,
+        canvasHeight.min,
+        canvasHeight.max
+    );
     canvas.width = cw;
     canvas.height = ch;
     canvasWidth.value = cw;
@@ -120,8 +143,7 @@ function startGame() {
 function isPointInSnake(x, y) {
     for (let index = 0; index < snake.length; index++) {
         const element = snake[index];
-        if (x == element.x && y == element.y)
-            return true;
+        if (x == element.x && y == element.y) return true;
     }
     return false;
 }
@@ -131,7 +153,6 @@ function gameOver() {
     scoreText.innerHTML = "Final Score: " + score;
 }
 
-
 function update() {
     doInput();
     doSnake();
@@ -139,8 +160,7 @@ function update() {
 }
 
 function doInput() {
-    if (lastKey == "")
-        return;
+    if (lastKey == "") return;
 
     let keyName = lastKey;
     lastKey = "";
@@ -153,23 +173,19 @@ function doInput() {
             isPaused = !isPaused;
             break;
         case "w":
-            if (currentDir.y == 1)
-                return;
+            if (currentDir.y == 1) return;
             newDir = new Point(0, -1);
             break;
         case "s":
-            if (currentDir.y == -1)
-                return;
+            if (currentDir.y == -1) return;
             newDir = new Point(0, 1);
             break;
         case "a":
-            if (currentDir.x == 1)
-                return;
+            if (currentDir.x == 1) return;
             newDir = new Point(-1, 0);
             break;
         case "d":
-            if (currentDir.x == -1)
-                return;
+            if (currentDir.x == -1) return;
             newDir = new Point(1, 0);
             break;
         default:
@@ -178,14 +194,11 @@ function doInput() {
 }
 
 function doSnake() {
-    if (!isRunning || isPaused)
-        return;
+    if (!isRunning || isPaused) return;
 
     tickUtillMove--;
-    if (tickUtillMove <= 0)
-        tickUtillMove += ticksNeededForMove;
-    else
-        return;
+    if (tickUtillMove <= 0) tickUtillMove += ticksNeededForMove;
+    else return;
 
     if (newDir) {
         currentDir = newDir;
@@ -199,15 +212,11 @@ function doSnake() {
     newHead.x += currentDir.x;
     newHead.y += currentDir.y;
 
-    if (newHead.x == xBlocks)
-        newHead.x = 0;
-    else if (newHead.x < 0)
-        newHead.x = xBlocks - 1;
+    if (newHead.x == xBlocks) newHead.x = 0;
+    else if (newHead.x < 0) newHead.x = xBlocks - 1;
 
-    if (newHead.y == yBlocks)
-        newHead.y = 0;
-    else if (newHead.y < 0)
-        newHead.y = yBlocks - 1;
+    if (newHead.y == yBlocks) newHead.y = 0;
+    else if (newHead.y < 0) newHead.y = yBlocks - 1;
 
     if (isPointInSnake(newHead.x, newHead.y)) {
         gameOver();
@@ -229,8 +238,7 @@ function doSnake() {
 
 function spawnApple() {
     // Don't try to spawn apple if there is no room to do so.
-    if(snake.length >= xBlocks * yBlocks)
-        return;
+    if (snake.length >= xBlocks * yBlocks) return;
 
     let x;
     let y;
@@ -244,48 +252,89 @@ function spawnApple() {
 }
 
 function render() {
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "black";
 
     for (let index = 0; index < snake.length; index++) {
         let point = snake[index];
-        ctx.fillRect(point.x * blockWidth, point.y * blockHeight, blockWidth, blockHeight);
+        ctx.fillRect(
+            point.x * blockWidth,
+            point.y * blockHeight,
+            blockWidth,
+            blockHeight
+        );
 
         if (index == 0) {
             ctx.fillStyle = "red";
             let x = currentDir.x == 0 ? 0.25 : 0;
             let y = currentDir.y == 0 ? 0.25 : 0;
-            ctx.fillRect(point.x * blockWidth + (0.5 - x / 2) * blockWidth + x * blockWidth, point.y * blockHeight + (0.5 - y / 2) * blockHeight + y * blockHeight, 0.25 * blockWidth, 0.25 * blockHeight);
-            ctx.fillRect(point.x * blockWidth + (0.5 - x / 2) * blockWidth - x * blockWidth, point.y * blockHeight + (0.5 - y / 2) * blockHeight - y * blockHeight, 0.25 * blockWidth, 0.25 * blockHeight);
+            ctx.fillRect(
+                point.x * blockWidth + (0.5 - x / 2) * blockWidth + x * blockWidth,
+                point.y * blockHeight + (0.5 - y / 2) * blockHeight + y * blockHeight,
+                0.25 * blockWidth,
+                0.25 * blockHeight
+            );
+            ctx.fillRect(
+                point.x * blockWidth + (0.5 - x / 2) * blockWidth - x * blockWidth,
+                point.y * blockHeight + (0.5 - y / 2) * blockHeight - y * blockHeight,
+                0.25 * blockWidth,
+                0.25 * blockHeight
+            );
             ctx.fillStyle = "black";
         }
     }
 
     ctx.beginPath();
-    ctx.ellipse(apple.x * blockWidth + blockWidth / 2, apple.y * blockHeight + blockHeight / 2, blockWidth / 2, blockHeight / 2, 0, 2 * Math.PI, false);
-    ctx.fillStyle = 'green';
+    ctx.ellipse(
+        apple.x * blockWidth + blockWidth / 2,
+        apple.y * blockHeight + blockHeight / 2,
+        blockWidth / 2,
+        blockHeight / 2,
+        0,
+        2 * Math.PI,
+        false
+    );
+    ctx.fillStyle = "green";
     ctx.fill();
 
     if (!isRunning) {
         ctx.fillStyle = "grey";
         ctx.font = "30px Verdana";
         let txt = "Game Over";
-        ctx.fillText(txt, canvas.width / 2 - ctx.measureText(txt).width / 2, canvas.height / 2);
+        ctx.fillText(
+            txt,
+            canvas.width / 2 - ctx.measureText(txt).width / 2,
+            canvas.height / 2
+        );
         ctx.font = "20px Verdana";
-        txt = scoreText.innerHTML;   
-        ctx.fillText(txt, canvas.width / 2 - ctx.measureText(txt).width / 2, canvas.height / 2 + 30);
-        txt = "press 'R' to restart";      
-        ctx.fillText(txt, canvas.width / 2 - ctx.measureText(txt).width / 2, canvas.height / 2 + 60);
-    }
-    else if (isPaused) {
+        txt = scoreText.innerHTML;
+        ctx.fillText(
+            txt,
+            canvas.width / 2 - ctx.measureText(txt).width / 2,
+            canvas.height / 2 + 30
+        );
+        txt = "press 'R' to restart";
+        ctx.fillText(
+            txt,
+            canvas.width / 2 - ctx.measureText(txt).width / 2,
+            canvas.height / 2 + 60
+        );
+    } else if (isPaused) {
         ctx.fillStyle = "grey";
         ctx.font = "30px Verdana";
-        let txt = "Paused";        
-        ctx.fillText(txt, canvas.width / 2 - ctx.measureText(txt).width / 2, canvas.height / 2);        
+        let txt = "Paused";
+        ctx.fillText(
+            txt,
+            canvas.width / 2 - ctx.measureText(txt).width / 2,
+            canvas.height / 2
+        );
         ctx.font = "20px Verdana";
         txt = "press 'P' to unpause";
-        ctx.fillText(txt, canvas.width / 2 - ctx.measureText(txt).width / 2, canvas.height / 2 + 30);
+        ctx.fillText(
+            txt,
+            canvas.width / 2 - ctx.measureText(txt).width / 2,
+            canvas.height / 2 + 30
+        );
     }
 }

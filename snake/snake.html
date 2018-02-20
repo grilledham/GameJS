@@ -5,40 +5,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake</title>
+
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/snake.css">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="snake.js"></script>
 </head>
 
-<body>
+<body></body>
+<div class="center-h">
+
     <div>
-        <canvas id="canvas" width="400" height="400" style="border:2px solid grey" />
+        <canvas id="canvas" width="400" height="400" />
     </div>
-    <div id="score"></div>
-    <div id=speed style="display:none"></div>
-    <div>
-        Canvas Width:
+
+    <div id="stats" class="center-h">
+        <div class="stack-v">
+            <h2 id="score"></h2>
+            <h2 id=speed style="display:none"></h2>
+        </div>
     </div>
-    <div>
+
+    <form class="form">
+        <h2 class="form-header">Game settings</h2>
+        <label>Canvas width:</label>
         <input id="canvasWidth" type="number" min="400" max="1800" step="50">
-    </div>
-    <div>
-        Canvas Height:
-    </div>
-    <div>
-        <input id="canvasHeight" type="number" min="400" max="900" step="50">
-    </div>
-    <div>
-        Columns:
-    </div>
-    <div>
+        <label>Canvas height:</label>
+        <input id="canvasHeight" type="number" type="number" min="400" max="900" step="50">
+        <label>Columns:</label>
         <input id="columns" type="number" min="5" max="100" step="1">
-    </div>
-    <div>
-        Rows:
-    </div>
-    <div>
-        <input id="rows" type="number" min="5" max="100" step="1">
-    </div>
+        <label>Rows:</label>
+        <input id="rows" type="number" type="number" min="5" max="100" step="1">
+        <div class="form-submit">
+            <input id="toggleDebugButton" type="button" value="Toggle debug info">
+            <input id="resetButton" type="button" value="Reset">
+        </div>
+    </form>
+
+</div>
 
 </body>
 

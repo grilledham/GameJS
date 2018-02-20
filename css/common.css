@@ -1,0 +1,83 @@
+.center-h {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+}
+
+.center-h > * {
+  grid-column-start: 2;
+}
+
+.headed-card {
+  display: flex;
+  flex-direction: column;
+  background: yellow;
+  justify-content: center;
+}
+
+.headed-card > * {
+  background: green;
+}
+
+.headed-card > .header {
+  background: red;
+  text-align: center;
+}
+
+.stack-v {
+  display: flex;
+  flex-direction: column;
+}
+
+.stack-h {
+  display: flex;
+  flex-direction: row;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr auto auto 1fr;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 5px;
+  border-color: lightgrey;
+  padding: 10px;
+  margin: 20px;
+}
+
+.form > .form-header{
+    grid-column: 2 / 4;
+    justify-self: center;    
+    margin: 10px;
+}
+
+.form > label {
+  grid-column-start: 2;
+  margin: 10px;
+  text-align: right;
+}
+
+.form > input {
+  grid-column-start: 3;
+  margin: 10px;
+}
+
+.form > .form-label {
+  grid-column: 2;
+  margin: 10px;
+  text-align: right;
+}
+
+.form > .form-input {
+  grid-column: 3;
+  margin: 10px;
+}
+
+.form > .form-submit {
+  grid-column: 2 / 4;  
+  justify-self: right;
+  margin: 10px;
+}
+
+/* .stack-v > *{
+    flex: 1 100%;
+} */
