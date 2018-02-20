@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     rowsMin = parseInt(rows.min);
     rowsMax = parseInt(rows.max);
 
-    document.addEventListener("keypress", event => {
+    document.addEventListener("keydown", event => {
         let keyName = event.key;
         keyName = keyName.toLowerCase();
         lastKey = keyName;
@@ -193,18 +193,22 @@ function doInput() {
             isPaused = !isPaused;
             break;
         case "w":
+        case "arrowup":
             if (currentDir.y == 1) return;
             newDir = new Point(0, -1);
             break;
         case "s":
+        case "arrowdown":
             if (currentDir.y == -1) return;
             newDir = new Point(0, 1);
             break;
         case "a":
+        case "arrowleft":
             if (currentDir.x == 1) return;
             newDir = new Point(-1, 0);
             break;
         case "d":
+        case "arrowright":
             if (currentDir.x == -1) return;
             newDir = new Point(1, 0);
             break;
