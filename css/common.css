@@ -37,7 +37,7 @@
   display: grid;
   grid-template-columns: 1fr auto auto 1fr;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   border-radius: 5px;
   border-color: lightgrey;
   padding: 10px;
