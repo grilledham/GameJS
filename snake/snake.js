@@ -273,8 +273,7 @@ function spawnApple() {
 
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "black";
+    
     let lightness = 0;
     let inc = 128 / snake.length;
 
