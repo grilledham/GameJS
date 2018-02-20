@@ -36,6 +36,15 @@ let speed;
 let isRunning = false;
 let isPaused = false;
 
+let canvasWidthMin;
+let canvasWidthMax;
+let canvasHeightMin;
+let canvasHeightMax;
+let columnsMin;
+let columnsMax;
+let rowsMin;
+let rowsMax;
+
 let lastKey = "";
 let ticksNeededForMove;
 let tickUtillMove;
@@ -53,6 +62,14 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
     canvasWidth.value = canvas.width;
     canvasHeight.value = canvas.height;
+    canvasWidthMin = parseInt(canvasWidth.min);
+    canvasWidthMax = parseInt(canvasWidth.max);
+    canvasHeightMin = parseInt(canvasHeight.min);
+    canvasHeightMax = parseInt(canvasHeight.max);
+    columnsMin = parseInt(columns.min);
+    columnsMax = parseInt(columns.max);
+    rowsMin = parseInt(rows.min);
+    rowsMax = parseInt(rows.max);
 
     document.addEventListener("keypress", event => {
         let keyName = event.key;
@@ -96,23 +113,26 @@ function doSpeed() {
 }
 
 function startGame() {
-    let cw = clamp(
-        parseInt(canvasWidth.value) || canvasWidth,
-        canvasWidth.min,
-        canvasWidth.max
-    );
-    let ch = clamp(
-        parseInt(canvasHeight.value) || canvasHeight,
-        canvasHeight.min,
-        canvasHeight.max
-    );
+    let cw = parseInt(canvasWidth.value);
+    if (isNaN(cw)) cw = canvas.width;
+    cw = clamp(cw, canvasWidthMin, canvasWidthMax);
+
+    let ch = parseInt(canvasHeight.value);
+    if (isNaN(ch)) ch = canvas.height;
+    ch = clamp(ch, canvasHeightMin, canvasHeightMax);
+
     canvas.width = cw;
     canvas.height = ch;
     canvasWidth.value = cw;
     canvasHeight.value = ch;
 
-    let c = clamp(parseInt(columns.value) || xBlocks, columns.min, columns.max);
-    let r = clamp(parseInt(rows.value) || yBlocks, rows.min, rows.max);
+    let c = parseInt(columns.value)
+    if (isNaN(c)) c = xBlocks;
+    let r = parseInt(rows.value);
+    if (isNaN(r)) r = yBlocks;
+
+    c = clamp(c, columnsMin, columnsMax);
+    r = clamp(r, rowsMin, rowsMax);
     xBlocks = c;
     yBlocks = r;
     columns.value = c;
@@ -255,8 +275,14 @@ function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "black";
+    let lightness = 0;
+    let inc = 128 / snake.length;
 
     for (let index = 0; index < snake.length; index++) {
+        let l = Math.floor(lightness);
+        let color = 'rgb(' + l + ',' + l + ',' + l + ')';
+        ctx.fillStyle = color;
+        lightness += inc;        
         let point = snake[index];
         ctx.fillRect(
             point.x * blockWidth,
@@ -281,7 +307,7 @@ function render() {
                 0.25 * blockWidth,
                 0.25 * blockHeight
             );
-            ctx.fillStyle = "black";
+
         }
     }
 
