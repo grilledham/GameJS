@@ -7,7 +7,7 @@
   grid-column-start: 2;
 }
 
-.headed-card {
+/* .headed-card {
   display: flex;
   flex-direction: column;
   background: yellow;
@@ -21,12 +21,7 @@
 .headed-card > .header {
   background: red;
   text-align: center;
-}
-
-.stack-v {
-  display: flex;
-  flex-direction: column;
-}
+} */
 
 .stack-h {
   display: flex;
@@ -79,7 +74,3 @@
 .form > * {
   margin: 10px;
 }
-
-/* .stack-v > *{
-    flex: 1 100%;
-} */
